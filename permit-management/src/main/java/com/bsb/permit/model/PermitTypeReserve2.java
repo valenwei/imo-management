@@ -2,12 +2,12 @@ package com.bsb.permit.model;
 
 import com.bsb.permit.util.Constants;
 
-final class PermitTypeReserve implements PermitType {
+final class PermitTypeReserve2 implements PermitType {
 
 	@Override
 	public String getTypeName() {
 		// TODO Auto-generated method stub
-		return Constants.PM_PERMIT_TYPE_RESERVE;
+		return Constants.PM_PERMIT_TYPE_RESERVE2;
 	}
 
 	@Override

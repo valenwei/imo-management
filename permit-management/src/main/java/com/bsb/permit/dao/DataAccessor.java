@@ -167,8 +167,9 @@ public class DataAccessor implements AutoCloseable {
 		PreparedStatement statUpdate = null;
 		ResultSet rs = null;
 		try {
-			String sqlFormat = "select permitId, expireDate from t_permit where permitId='%s' and permitType='%s'";
-			String sql = String.format(sqlFormat, permit.getPermitId(), permit.getPermitType().getTypeName());
+			String sqlFormat = "select permitId, expireDate from t_permit where permitId='%s' and permitType='%s' and imo='%s'";
+			String sql = String.format(sqlFormat, permit.getPermitId(), permit.getPermitType().getTypeName(),
+					permit.getImo());
 			statSelect = cnn.prepareStatement(sql);
 			rs = statSelect.executeQuery(sql);
 			if (rs.next()) {
@@ -178,9 +179,10 @@ public class DataAccessor implements AutoCloseable {
 				String existing = rs.getString("expireDate");
 				if (existing.compareToIgnoreCase(permit.getExpireDate()) < 0) {
 					// update
-					sqlFormat = "update t_permit set expireDate = '%s', rawData = '%s', status = '%s' where permitId = '%s'";
+					sqlFormat = "update t_permit set expireDate = '%s', rawData = '%s', status = '%s' where permitId='%s' and permitType='%s' and imo='%s'";
 					sql = String.format(sqlFormat, permit.getExpireDate(), permit.getRawText(),
-							StandardPermitStatuses.STATUS_EXTENDED, permit.getPermitId());
+							StandardPermitStatuses.STATUS_EXTENDED, permit.getPermitId(),
+							permit.getPermitType().getTypeName(), permit.getImo());
 					statUpdate = cnn.prepareStatement(sql);
 					int rows = statUpdate.executeUpdate(sql);
 					logger.info("Update affected rows = " + rows);

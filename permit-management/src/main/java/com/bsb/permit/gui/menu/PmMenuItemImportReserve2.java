@@ -3,18 +3,18 @@ package com.bsb.permit.gui.menu;
 import com.bsb.permit.model.PermitType;
 import com.bsb.permit.model.StandardPermitTypes;
 
-public class PmMenuItemImportReserve extends PmMenuItemImport {
+public class PmMenuItemImportReserve2 extends PmMenuItemImport {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1147451573716025677L;
 
-	public PmMenuItemImportReserve() {
+	public PmMenuItemImportReserve2() {
 		super();
 	}
 
-	public PmMenuItemImportReserve(String text) {
+	public PmMenuItemImportReserve2(String text) {
 		super(text);
 	}
 

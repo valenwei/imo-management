@@ -24,17 +24,18 @@ public class PmTabbedPermitView extends JTabbedPane implements ChangeListener {
 		return instance;
 	}
 
-	private List<String> permitTabs = null;
+	private List<String> permitTypes = null;
 
 	private PmTabbedPermitView() {
 		super();
+		permitTypes = new ArrayList<String>();
+		permitTypes.add(Constants.PM_PERMIT_TYPE_MASTER);
+		permitTypes.add(Constants.PM_PERMIT_TYPE_BACKUP);
+		permitTypes.add(Constants.PM_PERMIT_TYPE_RESERVE1);
+		permitTypes.add(Constants.PM_PERMIT_TYPE_RESERVE2);
 
-		permitTabs = new ArrayList<String>();
-		permitTabs.add(Constants.PM_PERMIT_TYPE_MASTER);
-		permitTabs.add(Constants.PM_PERMIT_TYPE_RESERVE);
-		permitTabs.add(Constants.PM_PERMIT_TYPE_BACKUP);
-		for (String tab : permitTabs) {
-			this.addTab(tab, PmPermitView.getInstance(tab));
+		for (String permitType : permitTypes) {
+			this.addTab(permitType, PmPermitView.getInstance(permitType));
 		}
 
 		this.addChangeListener(this);

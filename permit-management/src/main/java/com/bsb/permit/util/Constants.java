@@ -23,7 +23,8 @@ public final class Constants {
 	public static String PM_MENU_ABOUT = "About...";
 
 	public static String PM_PERMIT_TYPE_MASTER = "MASTER";
-	public static String PM_PERMIT_TYPE_RESERVE = "RESERVE";
+	public static String PM_PERMIT_TYPE_RESERVE1 = "RESERVE-1";
+	public static String PM_PERMIT_TYPE_RESERVE2 = "RESERVE-2";
 	public static String PM_PERMIT_TYPE_BACKUP = "BACKUP";
 	public static String PM_PERMIT_TYPE_NULL = "NULL";
 }

@@ -30,7 +30,7 @@ public class PmMenuBar extends JMenuBar {
 		importMasterMenu.setMnemonic(KeyEvent.VK_M);
 		importMenu.add(importMasterMenu);
 
-		PmMenuItem importReserveMenu = new PmMenuItemImportReserve("Reserve");
+		PmMenuItem importReserveMenu = new PmMenuItemImportReserve1("Reserve");
 		importReserveMenu.setMnemonic(KeyEvent.VK_R);
 		importMenu.add(importReserveMenu);
 
