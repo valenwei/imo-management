@@ -292,7 +292,7 @@ public class DataAccessor implements AutoCloseable {
 			rs = statSelect.executeQuery(sql);
 			while (rs.next()) {
 				result.add(new Ship(rs.getString("shipName"), rs.getString("description"), rs.getString("imo"),
-						rs.getString("ownerCompany")));
+						rs.getString("ownerCompany"), sql, sql, sql, sql));
 			}
 			return result;
 		} catch (Exception e) {

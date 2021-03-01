@@ -54,8 +54,8 @@ public final class PmAddShipDialog {
 		final int option = JOptionPane.showConfirmDialog(null, message, "Add Ship", JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		if (shipName.getText().length() > 0 && option == JOptionPane.OK_OPTION) {
-			new PmAddShipDialog().addShip(
-					new Ship(shipName.getText(), shipDescription.getText(), imo.getText(), ownerCompany.getText()));
+			new PmAddShipDialog().addShip(new Ship(shipName.getText(), shipDescription.getText(), imo.getText(),
+					ownerCompany.getText(), "", "", "", ""));
 		}
 	}
 
