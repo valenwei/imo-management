@@ -5,10 +5,11 @@
 
 Notes:
 1. BACKUP in the middle (MASTER/BACKUP/RESERVE-1/RESERVE-2) (Done)
-
-2. MASTER/BACKUP/RESERVE-1/RESERVE-2 show on demand
+2. MASTER/BACKUP/RESERVE-1/RESERVE-2 show on demand (Done)
 3. Add Ship
-	Add User Permit
+	Add User Permit (Done)
+	
+
 4. Will expire in this month, use yellow, show it together, use permit Id & satus
 5. Will expire in 6 months from next month begin, use red
 6. Statistic
