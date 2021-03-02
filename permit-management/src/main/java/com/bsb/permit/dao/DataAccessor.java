@@ -258,9 +258,10 @@ public class DataAccessor implements AutoCloseable {
 				result = 0;
 			} else {
 				// add
-				String sqlFormat = "insert into t_ship (shipName, description, imo, ownerCompany) values ('%s','%s','%s','%s')";
+				String sqlFormat = "insert into t_ship (shipName, description, imo, ownerCompany, master, backup,reserve1,reserve2) values ('%s','%s','%s','%s','%s','%s','%s','%s')";
 				sql = String.format(sqlFormat, ship.getShipName(), ship.getDescription(), ship.getImo(),
-						ship.getOwnerCompany());
+						ship.getOwnerCompany(), ship.getMaster(), ship.getBackup(), ship.getReserve1(),
+						ship.getReserve2());
 				statUpdate = cnn.prepareStatement(sql);
 				int rows = statUpdate.executeUpdate(sql);
 				logger.info("Add affected rows = " + rows);
@@ -268,6 +269,7 @@ public class DataAccessor implements AutoCloseable {
 			}
 		} catch (Exception e) {
 			result = -1;
+			logger.info("Add ship failed. " + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			closeResource(rs);
@@ -287,15 +289,17 @@ public class DataAccessor implements AutoCloseable {
 		ResultSet rs = null;
 		try {
 			List<Ship> result = new ArrayList<Ship>();
-			String sql = "select shipName, description, imo, ownerCompany from t_ship";
+			String sql = "select shipName, description, imo, ownerCompany, master, backup,reserve1,reserve2 from t_ship";
 			statSelect = cnn.prepareStatement(sql);
 			rs = statSelect.executeQuery(sql);
 			while (rs.next()) {
 				result.add(new Ship(rs.getString("shipName"), rs.getString("description"), rs.getString("imo"),
-						rs.getString("ownerCompany"), sql, sql, sql, sql));
+						rs.getString("ownerCompany"), rs.getString("master"), rs.getString("backup"),
+						rs.getString("reserve1"), rs.getString("reserve2")));
 			}
 			return result;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ArrayList<Ship>();
 		} finally {
 			closeResource(rs);

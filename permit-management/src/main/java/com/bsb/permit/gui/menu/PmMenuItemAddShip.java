@@ -1,6 +1,7 @@
 package com.bsb.permit.gui.menu;
 
-import com.bsb.permit.gui.PmAddShipDialog;
+import com.bsb.permit.gui.PmMainFrame;
+import com.bsb.permit.gui.PmShipDialogAdd;
 
 public class PmMenuItemAddShip extends PmMenuItem {
 
@@ -20,7 +21,7 @@ public class PmMenuItemAddShip extends PmMenuItem {
 	@Override
 	public void performAction() {
 		// TODO Auto-generated method stub
-		PmAddShipDialog.show();
+		new PmShipDialogAdd(PmMainFrame.getInstance()).setVisible(true);
 	}
 
 }

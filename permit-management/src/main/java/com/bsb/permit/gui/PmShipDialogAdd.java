@@ -12,6 +12,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import com.bsb.permit.dao.DataAccessor;
+import com.bsb.permit.model.Ship;
+
 public class PmShipDialogAdd extends JDialog {
 
 	/**
@@ -32,7 +35,7 @@ public class PmShipDialogAdd extends JDialog {
 	public PmShipDialogAdd(JFrame parent) {
 		super(parent, DIALOG_TITLE, true);
 //		Dimension size = parent.getSize();
-		setBounds(parent.getX() + 100, parent.getY() + 100, 800, 400);
+		setBounds(parent.getX() + 100, parent.getY() + 100, 800, 350);
 		init();
 	}
 
@@ -47,13 +50,13 @@ public class PmShipDialogAdd extends JDialog {
 		for (int i = 0; i < labelTexts.length; i++) {
 			JLabel lbl = new JLabel(labelTexts[i]);
 			container.add(lbl);
-			lbl.setBounds(40, 4 + 26 * i, 200, 25);
+			lbl.setBounds(40, 20 + 26 * i, 200, 25);
 		}
 
 		for (int i = 0; i < labelTexts.length; i++) {
 			JTextField txtField = new JTextField(labelTexts[i]);
 			container.add(txtField);
-			txtField.setBounds(160, 4 + 26 * i, 550, 25);
+			txtField.setBounds(160, 20 + 26 * i, 550, 25);
 			txtFields.put(labelTexts[i], txtField);
 		}
 
@@ -83,7 +86,20 @@ public class PmShipDialogAdd extends JDialog {
 	}
 
 	private void ok() {
-		System.out.println("OK");
+		try {
+			Ship ship = new Ship(txtFields.get(SHIPNAME).getText(), txtFields.get(DESCIPTION).getText(),
+					txtFields.get(IMO).getText(), txtFields.get(OWNERCOMPANY).getText(),
+					txtFields.get(MASTER).getText(), txtFields.get(BACKUP).getText(), txtFields.get(RESERVE1).getText(),
+					txtFields.get(RESERVE2).getText());
+
+			DataAccessor accessor = new DataAccessor();
+			if (accessor.addShip(ship) > 0) {
+				PmShipView.getInstance().addShip(ship);
+			}
+			accessor.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.dispose();
 	}
 

@@ -54,4 +54,36 @@ public class Ship {
 	public String getReserve2() {
 		return reserve2;
 	}
+
+	public boolean hasMaster() {
+		if (null == this.master || 0 == master.length()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean hasBackup() {
+		if (null == this.backup || 0 == backup.length()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean hasReserve1() {
+		if (null == this.reserve1 || 0 == reserve1.length()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean hasReserve2() {
+		if (null == this.reserve2 || 0 == reserve2.length()) {
+			return false;
+		}
+
+		return true;
+	}
 }

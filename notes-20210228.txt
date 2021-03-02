@@ -1,6 +1,11 @@
-Notes:
 
-1. BACKUP in the middle (MASTER/BACKUP/RESERVE-1/RESERVE-2)
+
+===================================================================================================
+2021-02-28
+
+Notes:
+1. BACKUP in the middle (MASTER/BACKUP/RESERVE-1/RESERVE-2) (Done)
+
 2. MASTER/BACKUP/RESERVE-1/RESERVE-2 show on demand
 3. Add Ship
 	Add User Permit

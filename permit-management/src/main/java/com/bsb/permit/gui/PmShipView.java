@@ -43,7 +43,8 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 	private PmShipView() {
 		super();
 
-		tableModel = new DefaultTableModel(new String[] { "IMO", "Ship Name", "Description", "Owner Company" }, 0);
+		tableModel = new DefaultTableModel(new String[] { "IMO", "Ship Name", "Description", "Owner Company", "Master",
+				"Backup", "Reserve1", "Reserve2" }, 0);
 		tableView = new JTable(tableModel);
 		tableView.getSelectionModel().addListSelectionListener(this);
 
@@ -114,11 +115,15 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 			return;
 		}
 
-		Object[] row = new Object[4];
+		Object[] row = new Object[8];
 		row[0] = ship.getImo();
 		row[1] = ship.getShipName();
 		row[2] = ship.getDescription();
 		row[3] = ship.getOwnerCompany();
+		row[4] = ship.getMaster();
+		row[5] = ship.getBackup();
+		row[6] = ship.getReserve1();
+		row[7] = ship.getReserve2();
 
 		this.tableModel.addRow(row);
 	}
@@ -138,10 +143,23 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 			return;
 		}
 		this.lastSelectRow = this.tableView.getSelectedRow();
-		showPermits();
+
+		if (this.lastSelectRow > -1) {
+			showPermits(new Ship(this.tableView.getValueAt(this.lastSelectRow, 1).toString(),
+					this.tableView.getValueAt(this.lastSelectRow, 2).toString(),
+					this.tableView.getValueAt(this.lastSelectRow, 0).toString(),
+					this.tableView.getValueAt(this.lastSelectRow, 3).toString(),
+					this.tableView.getValueAt(this.lastSelectRow, 4).toString(),
+					this.tableView.getValueAt(this.lastSelectRow, 5).toString(),
+					this.tableView.getValueAt(this.lastSelectRow, 6).toString(),
+					this.tableView.getValueAt(this.lastSelectRow, 7).toString()));
+		}
 	}
 
-	private void showPermits() {
+	private void showPermits(Ship ship) {
+
+		PmTabbedPermitView.getInstance().refreshTabs(ship);
+
 		PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
 		while (currentPermitView.getTableModel().getRowCount() > 0) {
 			currentPermitView.getTableModel().removeRow(0);
