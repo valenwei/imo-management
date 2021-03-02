@@ -78,4 +78,10 @@ public class PmPermitView extends JScrollPane {
 	public PermitType getPermitType() {
 		return permitType;
 	}
+
+	public void clearView() {
+		while (this.tableModel.getRowCount() > 0) {
+			this.tableModel.removeRow(0);
+		}
+	}
 }

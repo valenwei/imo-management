@@ -158,12 +158,12 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 
 	private void showPermits(Ship ship) {
 
-		PmTabbedPermitView.getInstance().refreshTabs(ship);
-
 		PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
 		while (currentPermitView.getTableModel().getRowCount() > 0) {
 			currentPermitView.getTableModel().removeRow(0);
 		}
+		PmTabbedPermitView.getInstance().refreshTabs(ship);
+
 		Thread t = new Thread(new Runnable() {
 
 			@Override

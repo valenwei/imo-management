@@ -60,15 +60,13 @@ public class PmTabbedPermitView extends JTabbedPane implements ChangeListener {
 			return;
 		}
 
+		for (String permitType : permitTypes) {
+			PmPermitView.getInstance(permitType).clearView();
+		}
+
 		while (this.getTabCount() > 1) {
 			this.removeTabAt(this.getTabCount() - 1);
 		}
-
-//		for (int i = 0; i < this.getTabCount(); i++) {
-//			if (false == this.getTitleAt(i).equalsIgnoreCase(Constants.PM_PERMIT_TYPE_MASTER)) {
-//				this.getComponentAt(i).setVisible(false);
-//			}
-//		}
 
 		if (ship.hasBackup()) {
 			this.insertTab(Constants.PM_PERMIT_TYPE_BACKUP, null,
@@ -84,49 +82,5 @@ public class PmTabbedPermitView extends JTabbedPane implements ChangeListener {
 			this.insertTab(Constants.PM_PERMIT_TYPE_RESERVE2, null,
 					PmPermitView.getInstance(Constants.PM_PERMIT_TYPE_RESERVE2), "", this.getTabCount());
 		}
-//
-////		if (ship.hasMaster()) {
-////			this.addTab(Constants.PM_PERMIT_TYPE_MASTER, PmPermitView.getInstance(Constants.PM_PERMIT_TYPE_MASTER));
-////		}
-//
-//		if (ship.hasBackup()) {
-//			for (int i = 0; i < this.getTabCount(); i++) {
-//				if (this.getTitleAt(i).equalsIgnoreCase(Constants.PM_PERMIT_TYPE_BACKUP)) {
-//					this.getComponentAt(i).setVisible(true);
-//					break;
-//				}
-//			}
-//		}
-//
-//		if (ship.hasReserve1()) {
-//			for (int i = 0; i < this.getTabCount(); i++) {
-//				if (this.getTitleAt(i).equalsIgnoreCase(Constants.PM_PERMIT_TYPE_RESERVE1)) {
-//					this.getComponentAt(i).setVisible(true);
-//					break;
-//				}
-//			}
-//		}
-//
-//		if (ship.hasReserve2()) {
-//			for (int i = 0; i < this.getTabCount(); i++) {
-//				if (this.getTitleAt(i).equalsIgnoreCase(Constants.PM_PERMIT_TYPE_RESERVE2)) {
-//					this.getComponentAt(i).setVisible(true);
-//					break;
-//				}
-//			}
-//		}
-//		if (ship.hasBackup()) {
-//			this.addTab(Constants.PM_PERMIT_TYPE_BACKUP, PmPermitView.getInstance(Constants.PM_PERMIT_TYPE_BACKUP));
-//		}
-
-//		if (ship.hasReserve1()) {
-//			this.addTab(Constants.PM_PERMIT_TYPE_RESERVE1, PmPermitView.getInstance(Constants.PM_PERMIT_TYPE_RESERVE1));
-//		}
-//
-//		if (ship.hasReserve2()) {
-//			this.addTab(Constants.PM_PERMIT_TYPE_RESERVE2, PmPermitView.getInstance(Constants.PM_PERMIT_TYPE_RESERVE2));
-//		}
-//
-//		this.invalidate();
 	}
 }
