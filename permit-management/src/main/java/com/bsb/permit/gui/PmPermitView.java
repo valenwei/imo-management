@@ -6,12 +6,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.bsb.permit.dao.DataAccessor;
+import com.bsb.permit.model.Permit;
 import com.bsb.permit.model.PermitType;
+import com.bsb.permit.model.Ship;
 import com.bsb.permit.model.StandardPermitTypes;
 
 public class PmPermitView extends JScrollPane {
@@ -24,6 +28,8 @@ public class PmPermitView extends JScrollPane {
 	private PermitType permitType;
 	private JTable tableView = null;
 	private DefaultTableModel tableModel = null;
+	private Ship currentShip = null;
+	private final Semaphore semaphore = new Semaphore(1);
 
 	private final static Map<String, PmPermitView> instances = new HashMap<String, PmPermitView>();
 
@@ -79,7 +85,65 @@ public class PmPermitView extends JScrollPane {
 		return permitType;
 	}
 
+	public synchronized void showPermitsOfShip(Ship ship) {
+		if (null == ship) {
+			return;
+		}
+
+		if (null != this.currentShip && this.currentShip.getImo().equalsIgnoreCase(ship.getImo())) {
+			return;
+		}
+
+		this.currentShip = ship;
+
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					PmPermitView.this.semaphore.acquire();
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				// TODO Auto-generated method stub
+				while (PmPermitView.this.tableModel.getRowCount() > 0) {
+					PmPermitView.this.tableModel.removeRow(0);
+				}
+
+				DataAccessor accessor = new DataAccessor();
+				try {
+					List<Permit> permits = accessor.getPermits(PmPermitView.this.getPermitType(),
+							PmPermitView.this.currentShip.getImo());
+					for (Permit p : permits) {
+						Object[] row = new Object[4];
+						row[0] = p.getPermitId();
+						row[1] = p.getExpireDate();
+						row[2] = p.getRawText();
+						row[3] = p.getStatus();
+						tableModel.addRow(row);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					try {
+						accessor.close();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				PmPermitView.this.semaphore.release();
+			}
+
+		});
+		t.start();
+	}
+
 	public void clearView() {
+		this.currentShip = null;
 		while (this.tableModel.getRowCount() > 0) {
 			this.tableModel.removeRow(0);
 		}

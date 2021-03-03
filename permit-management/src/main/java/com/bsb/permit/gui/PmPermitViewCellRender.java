@@ -21,38 +21,49 @@ public class PmPermitViewCellRender extends DefaultTableCellRenderer {
 			int row, int column) {
 
 		Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		if (column == 1) {
-			SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
-			try {
-				Date date = f.parse(value.toString());
-				Date twoMonthLater = dateAddMonth(f.parse(getCurrentDate()), 2);
+		String dateValue = table.getValueAt(row, 1).toString();
+		SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
+		try {
+			Calendar calendar = Calendar.getInstance();
 
-				if (date.compareTo(twoMonthLater) <= 0) {
+			Date date = f.parse(dateValue.toString());
+			calendar.setTime(date);
+			int expireYear = calendar.get(Calendar.YEAR);
+			int expireMonth = calendar.get(Calendar.MONTH);
+
+			Date currentDate = f.parse(getCurrentDate());
+			calendar.setTime(currentDate);
+			int currentYear = calendar.get(Calendar.YEAR);
+			int currentMonth = calendar.get(Calendar.MONTH);
+
+//			Date twoMonthLater = dateAddMonth(f.parse(getCurrentDate()), 2);
+			if (expireYear < currentYear) {
+				cell.setBackground(Color.DARK_GRAY);
+			} else if (expireYear == currentYear) {
+				if (expireMonth < currentMonth) {
+					cell.setBackground(Color.DARK_GRAY);
+				} else if (expireMonth == currentMonth) {
+					cell.setBackground(Color.YELLOW);
+				} else {
+
+					Date sixMonthLater = dateAddMonth(currentDate, 6);
+					if (date.compareTo(sixMonthLater) < 0) {
+						cell.setBackground(Color.RED);
+					} else {
+						cell.setBackground(Color.WHITE);
+					}
+				}
+			} else {
+				Date sixMonthLater = dateAddMonth(currentDate, 6);
+				if (date.compareTo(sixMonthLater) < 0) {
 					cell.setBackground(Color.RED);
 				} else {
 					cell.setBackground(Color.WHITE);
 				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-
-		} else {
-			String dateValue = table.getValueAt(row, 1).toString();
-			SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
-			try {
-				Date date = f.parse(dateValue.toString());
-				Date twoMonthLater = dateAddMonth(f.parse(getCurrentDate()), 2);
-
-				if (date.compareTo(twoMonthLater) <= 0) {
-					cell.setBackground(Color.RED);
-				} else {
-					cell.setBackground(Color.WHITE);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return cell;
 	}

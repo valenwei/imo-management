@@ -52,7 +52,9 @@ public class PmTabbedPermitView extends JTabbedPane implements ChangeListener {
 	public void stateChanged(ChangeEvent e) {
 		// TODO Auto-generated method stub
 		int selected = this.getSelectedIndex();
-		logger.info(this.getTitleAt(selected) + " is selected");
+		logger.debug(this.getTitleAt(selected) + " is selected");
+		PmPermitView.getInstance(this.getTitleAt(selected))
+				.showPermitsOfShip(PmShipView.getInstance().getSelectedShip());
 	}
 
 	public void refreshTabs(Ship ship) {

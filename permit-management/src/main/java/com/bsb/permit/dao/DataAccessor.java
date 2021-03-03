@@ -90,7 +90,7 @@ public class DataAccessor implements AutoCloseable {
 		ResultSet rs = null;
 		try {
 			List<Permit> result = new ArrayList<Permit>();
-			String sqlFormat = "select permitId, expireDate, rawData, status, permitType, imo from t_permit where permitType = '%s' and imo = '%s'";
+			String sqlFormat = "select permitId, expireDate, rawData, status, permitType, imo from t_permit where permitType = '%s' and imo = '%s' order by expireDate, permitId asc";
 			String sql = String.format(sqlFormat, permitType.getTypeName(), imo);
 			statSelect = cnn.prepareStatement(sql);
 			rs = statSelect.executeQuery(sql);

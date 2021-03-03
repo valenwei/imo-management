@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bsb.permit.dao.DataAccessor;
-import com.bsb.permit.model.Permit;
 import com.bsb.permit.model.Ship;
 import com.bsb.permit.util.Awaitility;
 
@@ -136,6 +135,20 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 		return "";
 	}
 
+	public Ship getSelectedShip() {
+		if (this.lastSelectRow < 0) {
+			return new Ship("NullShip", "", "", "", "", "", "", "");
+		}
+		return new Ship(this.tableView.getValueAt(this.lastSelectRow, 1).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 2).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 0).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 3).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 4).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 5).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 6).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 7).toString());
+	}
+
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		// TODO Auto-generated method stub
@@ -158,44 +171,48 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 
 	private void showPermits(Ship ship) {
 
-		PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
-		while (currentPermitView.getTableModel().getRowCount() > 0) {
-			currentPermitView.getTableModel().removeRow(0);
-		}
 		PmTabbedPermitView.getInstance().refreshTabs(ship);
 
-		Thread t = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				DataAccessor accessor = new DataAccessor();
-				try {
-					PmPermitView currentView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
-					List<Permit> permits = accessor.getPermits(currentView.getPermitType(),
-							PmShipView.getInstance().getSelectedImo());
-					for (Permit p : permits) {
-						Object[] row = new Object[4];
-						row[0] = p.getPermitId();
-						row[1] = p.getExpireDate();
-						row[2] = p.getRawText();
-						row[3] = p.getStatus();
-						currentView.getTableModel().addRow(row);
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					try {
-						accessor.close();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-
-		});
-		t.start();
+		PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
+		currentPermitView.showPermitsOfShip(ship);
+//		
+//		while (currentPermitView.getTableModel().getRowCount() > 0) {
+//			currentPermitView.getTableModel().removeRow(0);
+//		}
+//		PmTabbedPermitView.getInstance().refreshTabs(ship);
+//
+//		Thread t = new Thread(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				// TODO Auto-generated method stub
+//				DataAccessor accessor = new DataAccessor();
+//				try {
+//					PmPermitView currentView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
+//					List<Permit> permits = accessor.getPermits(currentView.getPermitType(),
+//							PmShipView.getInstance().getSelectedImo());
+//					for (Permit p : permits) {
+//						Object[] row = new Object[4];
+//						row[0] = p.getPermitId();
+//						row[1] = p.getExpireDate();
+//						row[2] = p.getRawText();
+//						row[3] = p.getStatus();
+//						currentView.getTableModel().addRow(row);
+//					}
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} finally {
+//					try {
+//						accessor.close();
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//
+//		});
+//		t.start();
 	}
 }
