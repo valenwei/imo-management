@@ -3,6 +3,9 @@ package com.bsb.permit.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -55,6 +58,8 @@ public class PmTabbedPermitView extends JTabbedPane implements ChangeListener {
 		logger.debug(this.getTitleAt(selected) + " is selected");
 		PmPermitView.getInstance(this.getTitleAt(selected))
 				.showPermitsOfShip(PmShipView.getInstance().getSelectedShip());
+
+		refreshImportMenu(this.getTitleAt(selected));
 	}
 
 	public void refreshTabs(Ship ship) {
@@ -85,4 +90,22 @@ public class PmTabbedPermitView extends JTabbedPane implements ChangeListener {
 					PmPermitView.getInstance(Constants.PM_PERMIT_TYPE_RESERVE2), "", this.getTabCount());
 		}
 	}
+
+	private void refreshImportMenu(String text) {
+		JMenuBar menuBar = PmMainFrame.getInstance().getJMenuBar();
+		JMenu permitMenu = menuBar.getMenu(0);
+		JMenu importMenu = (JMenu) permitMenu.getMenuComponent(0);
+		System.out.println(importMenu.getMenuComponentCount());
+
+		int count = importMenu.getMenuComponentCount();
+		for (int i = 0; i < count; i++) {
+			JMenuItem item = (JMenuItem) importMenu.getMenuComponent(i);
+			if (item.getText().equalsIgnoreCase(text)) {
+				item.setEnabled(true);
+			} else {
+				item.setEnabled(false);
+			}
+		}
+	}
+
 }

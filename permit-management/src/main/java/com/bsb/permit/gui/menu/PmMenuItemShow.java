@@ -1,12 +1,6 @@
 package com.bsb.permit.gui.menu;
 
-import java.util.List;
-
-import com.bsb.permit.dao.DataAccessor;
-import com.bsb.permit.gui.PmPermitView;
-import com.bsb.permit.gui.PmShipView;
-import com.bsb.permit.gui.PmTabbedPermitView;
-import com.bsb.permit.model.Permit;
+import com.bsb.permit.gui.PmSplitPane;
 
 public class PmMenuItemShow extends PmMenuItem {
 
@@ -25,44 +19,46 @@ public class PmMenuItemShow extends PmMenuItem {
 
 	@Override
 	public void performAction() {
-		// TODO Auto-generated method stub
-		PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
-		while (currentPermitView.getTableModel().getRowCount() > 0) {
-			currentPermitView.getTableModel().removeRow(0);
-		}
-		Thread t = new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				DataAccessor accessor = new DataAccessor();
-				try {
-					PmPermitView currentView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
-					List<Permit> permits = accessor.getPermits(currentView.getPermitType(),
-							PmShipView.getInstance().getSelectedImo());
-					for (Permit p : permits) {
-						Object[] row = new Object[4];
-						row[0] = p.getPermitId();
-						row[1] = p.getExpireDate();
-						row[2] = p.getRawText();
-						row[3] = p.getStatus();
-						currentView.getTableModel().addRow(row);
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					try {
-						accessor.close();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-
-		});
-		t.start();
+		PmSplitPane.getInstance().switchView();
+//		// TODO Auto-generated method stub
+//		PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
+//		while (currentPermitView.getTableModel().getRowCount() > 0) {
+//			currentPermitView.getTableModel().removeRow(0);
+//		}
+//		Thread t = new Thread(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				// TODO Auto-generated method stub
+//				DataAccessor accessor = new DataAccessor();
+//				try {
+//					PmPermitView currentView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
+//					List<Permit> permits = accessor.getPermits(currentView.getPermitType(),
+//							PmShipView.getInstance().getSelectedImo());
+//					for (Permit p : permits) {
+//						Object[] row = new Object[4];
+//						row[0] = p.getPermitId();
+//						row[1] = p.getExpireDate();
+//						row[2] = p.getRawText();
+//						row[3] = p.getStatus();
+//						currentView.getTableModel().addRow(row);
+//					}
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} finally {
+//					try {
+//						accessor.close();
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//
+//		});
+//		t.start();
 	}
 
 }

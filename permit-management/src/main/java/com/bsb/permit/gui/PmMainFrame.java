@@ -48,7 +48,7 @@ public class PmMainFrame extends JFrame implements WindowListener {
 	private void initFrame() {
 		this.setLayout(new BorderLayout());
 
-		this.add(new PmSplitPane());
+		this.add(PmSplitPane.getInstance());
 
 		this.setSize(1000, 600);
 		this.setLocationRelativeTo(null);
