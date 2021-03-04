@@ -16,6 +16,7 @@ import com.bsb.permit.model.PermitType;
 import com.bsb.permit.model.Ship;
 import com.bsb.permit.model.StandardPermitStatuses;
 import com.bsb.permit.model.StandardPermitTypes;
+import com.bsb.permit.util.Constants;
 
 public class DataAccessor implements AutoCloseable {
 
@@ -39,18 +40,6 @@ public class DataAccessor implements AutoCloseable {
 		prop.setProperty("user", "root");
 		prop.setProperty("password", "root000");
 		cnn = DriverManager.getConnection(url, prop);
-	}
-
-	public void addPermit(Permit permit, boolean overwrite) {
-		if (null == cnn) {
-			logger.info("No connection");
-			return;
-		}
-		if (overwrite) {
-			addOrUpdate(permit);
-		} else {
-			addOnly(permit);
-		}
 	}
 
 	public List<Permit> getPermits() {
@@ -133,7 +122,7 @@ public class DataAccessor implements AutoCloseable {
 		}
 	}
 
-	private void addOnly(Permit permit) {
+	private void addPermit(Permit permit) {
 		PreparedStatement statSelect = null;
 		PreparedStatement statUpdate = null;
 		ResultSet rs = null;
@@ -162,7 +151,7 @@ public class DataAccessor implements AutoCloseable {
 		}
 	}
 
-	private void addOrUpdate(Permit permit) {
+	public int addOrUpdatePermit(Permit permit) {
 		PreparedStatement statSelect = null;
 		PreparedStatement statUpdate = null;
 		ResultSet rs = null;
@@ -186,8 +175,10 @@ public class DataAccessor implements AutoCloseable {
 					statUpdate = cnn.prepareStatement(sql);
 					int rows = statUpdate.executeUpdate(sql);
 					logger.info("Update affected rows = " + rows);
+					return Constants.DATA_ACCESSOR_UPDATE;
 				} else {
 					logger.info("Skip update permitId = " + permit.getPermitId());
+					return Constants.DATA_ACCESSOR_SKIP;
 				}
 			} else {
 				// add
@@ -197,9 +188,11 @@ public class DataAccessor implements AutoCloseable {
 				statUpdate = cnn.prepareStatement(sql);
 				int rows = statUpdate.executeUpdate(sql);
 				logger.info("Add affected rows = " + rows);
+				return Constants.DATA_ACCESSOR_ADD;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return Constants.DATA_ACCESSOR_FAILURE;
 		} finally {
 			closeResource(rs);
 			closeResource(statSelect);

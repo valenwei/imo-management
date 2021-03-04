@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bsb.permit.dao.DataAccessor;
+import com.bsb.permit.gui.PmMainFrame;
+import com.bsb.permit.gui.PmPermitImportResultDialog;
 import com.bsb.permit.gui.PmShipView;
 import com.bsb.permit.model.Permit;
 import com.bsb.permit.model.PermitType;
@@ -67,6 +69,26 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 		}
 	}
 
+	private class ImportRunnable implements Runnable {
+
+		private PmPermitImportResultDialog result;
+		private String fileName;
+
+		private ImportRunnable(String fileName, PmPermitImportResultDialog result) {
+			this.fileName = fileName;
+			this.result = result;
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			PmPermitImportResultDialog result = new PmPermitImportResultDialog(PmMainFrame.getInstance());
+			result.addPermit(null, 1);
+			result.setVisible(true);
+		}
+
+	}
+
 	public PmMenuItemImport() {
 		super();
 	}
@@ -85,12 +107,17 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 			c.addChoosableFileFilter(new TextFileFilter());
 			int ret = c.showOpenDialog(null);
 			if (0 == ret) {
-				DataAccessor accessor = new DataAccessor();
-				importInput(c.getSelectedFile().getPath(), accessor);
-				accessor.close();
-				logger.info("Succeed importing");
+
+				new Thread(new ImportRunnable(c.getSelectedFile().getPath(), null)).start();
+
+//				DataAccessor accessor = new DataAccessor();
+//				importInput(c.getSelectedFile().getPath(), accessor);
+//				accessor.close();
+//				logger.info("Succeed importing");
 			} else {
 				logger.info("Cancel importing");
+				PmPermitImportResultDialog result = new PmPermitImportResultDialog(PmMainFrame.getInstance());
+				result.setVisible(true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -116,7 +143,7 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 					logger.debug(p.getRawText());
 					logger.debug(p.getPermitType().getTypeName());
 					logger.debug("-------------------------------------------------");
-					accessor.addPermit(p, true);
+					accessor.addOrUpdatePermit(p);
 				}
 			}
 
@@ -124,6 +151,7 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	private Permit parseLine(String line) {
