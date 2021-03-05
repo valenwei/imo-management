@@ -135,6 +135,7 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 	@Override
 	public void performAction() {
 		// TODO Auto-generated method stub
+
 		logger.info("Start importing...");
 		try {
 			JFileChooser c = new JFileChooser();

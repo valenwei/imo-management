@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.bsb.permit.dao.DataAccessor;
 import com.bsb.permit.model.Ship;
 import com.bsb.permit.util.Awaitility;
+import com.bsb.permit.util.Constants;
 
 public class PmShipView extends JScrollPane implements Runnable, ListSelectionListener {
 
@@ -137,7 +138,7 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 
 	public Ship getSelectedShip() {
 		if (this.lastSelectRow < 0) {
-			return new Ship("NullShip", "", "", "", "", "", "", "");
+			return new Ship(Constants.PM_SHIP_DUMMY, "", "", "", "", "", "", "");
 		}
 		return new Ship(this.tableView.getValueAt(this.lastSelectRow, 1).toString(),
 				this.tableView.getValueAt(this.lastSelectRow, 2).toString(),

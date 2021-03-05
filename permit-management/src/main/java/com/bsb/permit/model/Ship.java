@@ -1,5 +1,7 @@
 package com.bsb.permit.model;
 
+import com.bsb.permit.util.Constants;
+
 public class Ship {
 
 	private String shipName;
@@ -85,5 +87,9 @@ public class Ship {
 		}
 
 		return true;
+	}
+
+	public boolean isDummyShip() {
+		return Constants.PM_SHIP_DUMMY.equalsIgnoreCase(this.getShipName());
 	}
 }
