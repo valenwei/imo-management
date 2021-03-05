@@ -1,5 +1,6 @@
 package com.bsb.permit.gui.menu;
 
+import java.awt.Dialog;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,20 +72,54 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 
 	private class ImportRunnable implements Runnable {
 
-		private PmPermitImportResultDialog result;
 		private String fileName;
 
-		private ImportRunnable(String fileName, PmPermitImportResultDialog result) {
+		private ImportRunnable(String fileName) {
 			this.fileName = fileName;
-			this.result = result;
 		}
 
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
 			PmPermitImportResultDialog result = new PmPermitImportResultDialog(PmMainFrame.getInstance());
-			result.addPermit(null, 1);
+			result.setModalityType(Dialog.ModalityType.MODELESS);
 			result.setVisible(true);
+			DataAccessor accessor = null;
+			try {
+				accessor = new DataAccessor();
+				File fin = new File(fileName);
+				FileInputStream fis = new FileInputStream(fin);
+
+				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					if (line.length() < 64 || line.startsWith(":")) {
+						logger.info("Line skipped: " + line);
+					} else {
+						Permit p = parseLine(line);
+						logger.debug(p.getPermitId());
+						logger.debug(p.getExpireDate());
+						logger.debug(p.getRawText());
+						logger.debug(p.getPermitType().getTypeName());
+						logger.debug("-------------------------------------------------");
+						result.addPermit(p, accessor.addOrUpdatePermit(p));
+					}
+				}
+
+				br.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (null != accessor) {
+					try {
+						accessor.close();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 
 	}
@@ -108,7 +143,7 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 			int ret = c.showOpenDialog(null);
 			if (0 == ret) {
 
-				new Thread(new ImportRunnable(c.getSelectedFile().getPath(), null)).start();
+				new Thread(new ImportRunnable(c.getSelectedFile().getPath())).start();
 
 //				DataAccessor accessor = new DataAccessor();
 //				importInput(c.getSelectedFile().getPath(), accessor);

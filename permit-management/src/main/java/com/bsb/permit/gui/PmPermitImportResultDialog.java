@@ -6,12 +6,12 @@ import java.awt.Font;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.bsb.permit.model.Permit;
+import com.bsb.permit.util.Constants;
 
 public class PmPermitImportResultDialog extends JDialog {
 
@@ -31,8 +31,6 @@ public class PmPermitImportResultDialog extends JDialog {
 	}
 
 	private void init() {
-		this.setLayout(null);
-
 		Container container = this.getContentPane();
 		JScrollPane pane = new JScrollPane();
 
@@ -52,20 +50,32 @@ public class PmPermitImportResultDialog extends JDialog {
 		tableView.setRowHeight(30);
 		tableView.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
+		PmPermitImportResultCellRender cellRender = new PmPermitImportResultCellRender();
+		tableView.getColumn("Permit Id").setCellRenderer(cellRender);
+		tableView.getColumn("Expire Date").setCellRenderer(cellRender);
+		tableView.getColumn("Raw Data").setCellRenderer(cellRender);
+		tableView.getColumn("Status").setCellRenderer(cellRender);
+
 		pane.setViewportView(this.tableView);
 
 		container.add(pane);
-		pane.setBounds(4, 4, 776, 304);
-
-		container.add(new JLabel("OK"));
 	}
 
 	public void addPermit(Permit permit, int result) {
+		if (null == permit) {
+			return;
+		}
 		Object[] row = new Object[4];
-		row[0] = "1";
-		row[1] = "2";
-		row[2] = "3";
-		row[3] = "4";
+		row[0] = permit.getPermitId();
+		row[1] = permit.getExpireDate();
+		row[2] = permit.getRawText();
+		if (result == Constants.DATA_ACCESSOR_ADD) {
+			row[3] = "New Added";
+		} else if (result == Constants.DATA_ACCESSOR_UPDATE) {
+			row[3] = "Updated";
+		} else {
+			row[3] = "";
+		}
 		this.tableModel.addRow(row);
 
 	}

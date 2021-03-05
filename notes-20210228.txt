@@ -10,11 +10,12 @@ Notes:
 	Add User Permit (Done)
 4. Will expire in this month, use yellow, show it together, use permit Id & status (Done)
 5. Will expire in 6 months from next month begin, use red (Done)
-
-
-6. Statistic
+6. Statistic					(Done)
 	How many new added.
 	How many updated
-	Put statistic in a list
-7. Do not show expired ones
+	Put statistic in a list	
+7. Do not show expired ones (Done, but shown as GRAY)
+
+
+
 8. Export in total, with zip
