@@ -1,9 +1,15 @@
 package com.bsb.permit.gui.menu;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFileChooser;
@@ -11,6 +17,7 @@ import javax.swing.JFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bsb.permit.dao.DataAccessor;
 import com.bsb.permit.gui.PmShipView;
 import com.bsb.permit.model.Ship;
 import com.bsb.permit.util.Constants;
@@ -44,40 +51,6 @@ public class PmMenuItemExport extends PmMenuItem {
 			for (String key : folders.keySet()) {
 				new Thread(new ExportExecuter(this.ship, folders.get(key), key)).start();
 			}
-
-//			DataAccessor accessor = new DataAccessor();
-//			try {
-//				Path path1 = Paths.get(path);
-//				BufferedWriter writer = Files.newBufferedWriter(path1, StandardOpenOption.CREATE);
-//				writer.write(":DATE " + getCurrentDate());
-//				writer.newLine();
-//				writer.write(":VERSION 2");
-//				writer.newLine();
-//				writer.write(":ENC");
-//				writer.newLine();
-//
-//				List<String> permits = accessor.exportRawData();
-//				for (String p : permits) {
-//					writer.write(p);
-//					writer.newLine();
-//				}
-//				writer.write(":ECS");
-//				writer.newLine();
-//				writer.close();
-//
-//				logger.info("Succeed exporting");
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				logger.info("Failed exporting");
-//			} finally {
-//				try {
-//					accessor.close();
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
 		}
 
 		private Map<String, String> createExportFolders() {
@@ -149,7 +122,42 @@ public class PmMenuItemExport extends PmMenuItem {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			System.out.println(this.folder + ": " + this.permitType);
+			DataAccessor accessor = new DataAccessor();
+			try {
+				if (!folder.endsWith(File.separator)) {
+					folder = folder + File.separator;
+				}
+				Path path = Paths.get(folder + "PERMIT.TXT");
+				BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
+				writer.write(":DATE " + getCurrentDate());
+				writer.newLine();
+				writer.write(":VERSION 2");
+				writer.newLine();
+				writer.write(":ENC");
+				writer.newLine();
+
+				List<String> permits = accessor.exportRawData(this.ship, this.permitType);
+				for (String p : permits) {
+					writer.write(p);
+					writer.newLine();
+				}
+				writer.write(":ECS");
+				writer.newLine();
+				writer.close();
+
+				logger.info("Succeed exporting");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.info("Failed exporting");
+			} finally {
+				try {
+					accessor.close();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 
 	}

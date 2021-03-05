@@ -97,7 +97,7 @@ public class DataAccessor implements AutoCloseable {
 		}
 	}
 
-	public List<String> exportRawData() {
+	public List<String> exportRawData(Ship ship, String permitType) {
 
 		if (null == cnn) {
 			logger.info("No connection");
@@ -107,9 +107,9 @@ public class DataAccessor implements AutoCloseable {
 		ResultSet rs = null;
 		try {
 			List<String> result = new ArrayList<String>();
-			String sql = "select rawData from t_permit";
-			statSelect = cnn.prepareStatement(sql);
-			rs = statSelect.executeQuery(sql);
+			String sqlFormat = "select rawData from t_permit where IMO='%s' and permitType='%s'";
+			statSelect = cnn.prepareStatement(String.format(sqlFormat, ship.getImo(), permitType));
+			rs = statSelect.executeQuery();
 			while (rs.next()) {
 				result.add(rs.getString("rawData"));
 			}
