@@ -38,20 +38,21 @@ public class PmPermitViewCellRender extends DefaultTableCellRenderer {
 
 //			Date twoMonthLater = dateAddMonth(f.parse(getCurrentDate()), 2);
 			if (expireYear < currentYear) {
-				cell.setBackground(Color.DARK_GRAY);
+				cell.setBackground(Color.GRAY);
 			} else if (expireYear == currentYear) {
 				if (expireMonth < currentMonth) {
-					cell.setBackground(Color.DARK_GRAY);
+					cell.setBackground(Color.GRAY);
 				} else if (expireMonth == currentMonth) {
 					cell.setBackground(Color.YELLOW);
 				} else {
 
-					Date sixMonthLater = dateAddMonth(currentDate, 6);
-					if (date.compareTo(sixMonthLater) < 0) {
-						cell.setBackground(Color.RED);
-					} else {
-						cell.setBackground(Color.WHITE);
-					}
+					cell.setBackground(Color.WHITE);
+//					Date sixMonthLater = dateAddMonth(currentDate, 6);
+//					if (date.compareTo(sixMonthLater) < 0) {
+//						cell.setBackground(Color.RED);
+//					} else {
+//						cell.setBackground(Color.WHITE);
+//					}
 				}
 			} else {
 				Date sixMonthLater = dateAddMonth(currentDate, 6);

@@ -40,4 +40,7 @@ public final class Constants {
 	public static final String PM_SHIP_DUMMY = "PM-DummyShip";
 
 	public static final String PM_EXPORT_FOLDER_PREFIX = "AVCSPermits-";
+
+	// PmExceptions
+	public static final String PM_EXCEPTION_CONNECTION_FAILURE = "Fail to connect to DB";
 }

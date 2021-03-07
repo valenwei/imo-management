@@ -20,4 +20,13 @@ public final class Awaitility {
 			logger.info("Wait {} milliseconds timeout.", milliSeconds);
 		}
 	}
+
+	public static void await60s() {
+		try {
+			await(60 * 1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

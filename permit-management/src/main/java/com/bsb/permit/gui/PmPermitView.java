@@ -50,7 +50,7 @@ public class PmPermitView extends JScrollPane {
 		tableView.setForeground(Color.BLACK);
 		tableView.setFont(new Font(null, Font.PLAIN, 14));
 		tableView.setRowSelectionAllowed(true);
-		tableView.setSelectionForeground(Color.DARK_GRAY);
+		tableView.setSelectionForeground(Color.BLUE);
 		tableView.setSelectionBackground(Color.LIGHT_GRAY);
 		tableView.setGridColor(Color.GRAY);
 
@@ -85,9 +85,13 @@ public class PmPermitView extends JScrollPane {
 		return permitType;
 	}
 
-	public synchronized void showPermitsOfShip(Ship ship) {
+	public synchronized void showPermitsOfShip(Ship ship, boolean forceRefresh) {
 		if (null == ship) {
 			return;
+		}
+
+		if (forceRefresh) {
+			this.currentShip = null;
 		}
 
 		if (null != this.currentShip && this.currentShip.getImo().equalsIgnoreCase(ship.getImo())) {

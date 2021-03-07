@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bsb.permit.exception.PmException;
 import com.bsb.permit.model.Permit;
 import com.bsb.permit.model.PermitType;
 import com.bsb.permit.model.Ship;
@@ -273,10 +274,10 @@ public class DataAccessor implements AutoCloseable {
 		return result;
 	}
 
-	public List<Ship> getShips() {
+	public List<Ship> getShips() throws PmException {
 		if (null == cnn) {
 			logger.info("No connection");
-			return new ArrayList<Ship>();
+			throw new PmException(Constants.PM_EXCEPTION_CONNECTION_FAILURE);
 		}
 		PreparedStatement statSelect = null;
 		ResultSet rs = null;
@@ -293,7 +294,7 @@ public class DataAccessor implements AutoCloseable {
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ArrayList<Ship>();
+			throw new PmException(Constants.PM_EXCEPTION_CONNECTION_FAILURE, e);
 		} finally {
 			closeResource(rs);
 			closeResource(statSelect);

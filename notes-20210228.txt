@@ -1,5 +1,12 @@
 
 
+2021-03-06
+
+1. Remove red color for expire in 6 months (Done)
+2. Tissing to provide the status info
+3. Tissing to provide logo icon
+
+
 ===================================================================================================
 2021-02-28
 
@@ -15,7 +22,4 @@ Notes:
 	How many updated
 	Put statistic in a list	
 7. Do not show expired ones (Done, but shown as GRAY)
-
-
-
-8. Export in total, with zip
+8. Export in total, with zip (Half Done)

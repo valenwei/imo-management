@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bsb.permit.dao.DataAccessor;
+import com.bsb.permit.exception.PmException;
 import com.bsb.permit.model.Ship;
 import com.bsb.permit.util.Awaitility;
 import com.bsb.permit.util.Constants;
@@ -83,29 +84,41 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		try {
-			while (true) {
-				// Tye load ships
-				try {
-					DataAccessor accessor = new DataAccessor();
-					List<Ship> ships = accessor.getShips();
-					if (ships.size() > 0) {
-						for (Ship ship : ships) {
-							addShip(ship);
-						}
-						break;
-					} else {
-						logger.info("Load ships failed or no ship loaded. Tra again after 1 minute.");
-						Awaitility.await(60 * 1000);
+		boolean shipLoaded = false;
+		while (!shipLoaded) {
+			// Try load ships
+			DataAccessor accessor = null;
+			try {
+				accessor = new DataAccessor();
+				List<Ship> ships = accessor.getShips();
+				if (ships.size() > 0) {
+					for (Ship ship : ships) {
+						addShip(ship);
 					}
-					accessor.close();
-				} catch (Exception e) {
-					e.printStackTrace();
+					logger.info("{} ships loaded.", ships.size());
+				} else {
+					logger.info("No ships found.");
+				}
+				shipLoaded = true;
+			} catch (PmException e) {
+				e.printStackTrace();
+				logger.info("Load ships failed. Tra again after 1 minute.");
+				Awaitility.await60s();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.info("Load ships failed. Tra again after 1 minute.");
+				Awaitility.await60s();
+			} finally {
+				if (null != accessor) {
+					try {
+						accessor.close();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -175,7 +188,7 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 		PmTabbedPermitView.getInstance().refreshTabs(ship);
 
 		PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
-		currentPermitView.showPermitsOfShip(ship);
+		currentPermitView.showPermitsOfShip(ship, true);
 //		
 //		while (currentPermitView.getTableModel().getRowCount() > 0) {
 //			currentPermitView.getTableModel().removeRow(0);

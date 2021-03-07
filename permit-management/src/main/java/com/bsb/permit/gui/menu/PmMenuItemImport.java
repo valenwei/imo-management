@@ -15,9 +15,11 @@ import org.slf4j.LoggerFactory;
 import com.bsb.permit.dao.DataAccessor;
 import com.bsb.permit.gui.PmMainFrame;
 import com.bsb.permit.gui.PmPermitImportResultDialog;
+import com.bsb.permit.gui.PmPermitView;
 import com.bsb.permit.gui.PmShipView;
 import com.bsb.permit.model.Permit;
 import com.bsb.permit.model.PermitType;
+import com.bsb.permit.model.Ship;
 import com.bsb.permit.model.StandardPermitStatuses;
 
 public abstract class PmMenuItemImport extends PmMenuItem {
@@ -92,12 +94,13 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 
 				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
+				Ship ship = PmShipView.getInstance().getSelectedShip();
 				String line = null;
 				while ((line = br.readLine()) != null) {
 					if (line.length() < 64 || line.startsWith(":")) {
 						logger.info("Line skipped: " + line);
 					} else {
-						Permit p = parseLine(line);
+						Permit p = parseLine(line, ship);
 						logger.debug(p.getPermitId());
 						logger.debug(p.getExpireDate());
 						logger.debug(p.getRawText());
@@ -108,6 +111,8 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 				}
 
 				br.close();
+
+				PmPermitView.getInstance(getPermitType().getTypeName()).showPermitsOfShip(ship, true);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -152,8 +157,6 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 //				logger.info("Succeed importing");
 			} else {
 				logger.info("Cancel importing");
-				PmPermitImportResultDialog result = new PmPermitImportResultDialog(PmMainFrame.getInstance());
-				result.setVisible(true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -161,7 +164,11 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 		}
 	}
 
-	private void importInput(String fileName, DataAccessor accessor) {
+	private void importInput(String fileName, DataAccessor accessor, Ship ship) {
+		if (null == ship) {
+			return;
+		}
+
 		try {
 			File fin = new File(fileName);
 			FileInputStream fis = new FileInputStream(fin);
@@ -173,7 +180,7 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 				if (line.length() < 64 || line.startsWith(":")) {
 					logger.info("Line skipped: " + line);
 				} else {
-					Permit p = parseLine(line);
+					Permit p = parseLine(line, ship);
 					logger.debug(p.getPermitId());
 					logger.debug(p.getExpireDate());
 					logger.debug(p.getRawText());
@@ -190,20 +197,20 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 
 	}
 
-	private Permit parseLine(String line) {
-		if (null == line) {
+	private Permit parseLine(String line, Ship ship) {
+		if (null == line || null == ship) {
 			return new Permit("", "", "", StandardPermitStatuses.mapPermitStatus(""), this.getPermitType(),
-					PmShipView.getInstance().getSelectedImo());
+					ship.getImo());
 		}
 
 		try {
 			String permitId = line.substring(0, 8);
 			String expireDate = line.substring(8, 16);
 			return new Permit(permitId, expireDate, line, StandardPermitStatuses.mapPermitStatus(""),
-					this.getPermitType(), PmShipView.getInstance().getSelectedImo());
+					this.getPermitType(), ship.getImo());
 		} catch (Exception e) {
 			return new Permit("", "", "", StandardPermitStatuses.mapPermitStatus(""), this.getPermitType(),
-					PmShipView.getInstance().getSelectedImo());
+					ship.getImo());
 		}
 	}
 
