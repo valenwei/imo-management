@@ -3,7 +3,7 @@
 2021-03-06
 
 1. Remove red color for expire in 6 months (Done)
-2. Tissing to provide the status info
+2. Tissing to provide the status info (Done)
 3. Tissing to provide logo icon
 
 
