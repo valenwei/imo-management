@@ -20,7 +20,7 @@ import com.bsb.permit.gui.PmShipView;
 import com.bsb.permit.model.Permit;
 import com.bsb.permit.model.PermitType;
 import com.bsb.permit.model.Ship;
-import com.bsb.permit.model.StandardPermitStatuses;
+import com.bsb.permit.util.PmUtil;
 
 public abstract class PmMenuItemImport extends PmMenuItem {
 
@@ -148,13 +148,7 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 			c.addChoosableFileFilter(new TextFileFilter());
 			int ret = c.showOpenDialog(null);
 			if (0 == ret) {
-
 				new Thread(new ImportRunnable(c.getSelectedFile().getPath())).start();
-
-//				DataAccessor accessor = new DataAccessor();
-//				importInput(c.getSelectedFile().getPath(), accessor);
-//				accessor.close();
-//				logger.info("Succeed importing");
 			} else {
 				logger.info("Cancel importing");
 			}
@@ -164,53 +158,17 @@ public abstract class PmMenuItemImport extends PmMenuItem {
 		}
 	}
 
-	private void importInput(String fileName, DataAccessor accessor, Ship ship) {
-		if (null == ship) {
-			return;
-		}
-
-		try {
-			File fin = new File(fileName);
-			FileInputStream fis = new FileInputStream(fin);
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				if (line.length() < 64 || line.startsWith(":")) {
-					logger.info("Line skipped: " + line);
-				} else {
-					Permit p = parseLine(line, ship);
-					logger.debug(p.getPermitId());
-					logger.debug(p.getExpireDate());
-					logger.debug(p.getRawText());
-					logger.debug(p.getPermitType().getTypeName());
-					logger.debug("-------------------------------------------------");
-					accessor.addOrUpdatePermit(p);
-				}
-			}
-
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
 	private Permit parseLine(String line, Ship ship) {
 		if (null == line || null == ship) {
-			return new Permit("", "", "", StandardPermitStatuses.mapPermitStatus(""), this.getPermitType(),
-					ship.getImo());
+			return new Permit("", "", "", PmUtil.getCurrentDate(), this.getPermitType(), ship.getImo());
 		}
 
 		try {
 			String permitId = line.substring(0, 8);
 			String expireDate = line.substring(8, 16);
-			return new Permit(permitId, expireDate, line, StandardPermitStatuses.mapPermitStatus(""),
-					this.getPermitType(), ship.getImo());
+			return new Permit(permitId, expireDate, line, PmUtil.getCurrentDate(), this.getPermitType(), ship.getImo());
 		} catch (Exception e) {
-			return new Permit("", "", "", StandardPermitStatuses.mapPermitStatus(""), this.getPermitType(),
-					ship.getImo());
+			return new Permit("", "", "", PmUtil.getCurrentDate(), this.getPermitType(), ship.getImo());
 		}
 	}
 

@@ -44,7 +44,8 @@ public class PmPermitView extends JScrollPane {
 		super();
 		this.permitType = viewType;
 
-		tableModel = new DefaultTableModel(new String[] { "Permit Id", "Expire Date", "Raw Data", "Status" }, 0);
+		tableModel = new DefaultTableModel(
+				new String[] { "Permit Id", "Expire Date", "Raw Data", "Import Date", "Status" }, 0);
 		tableView = new JTable(tableModel);
 
 		tableView.setForeground(Color.BLACK);
@@ -64,6 +65,7 @@ public class PmPermitView extends JScrollPane {
 		tableView.getColumn("Permit Id").setCellRenderer(cellRender);
 		tableView.getColumn("Expire Date").setCellRenderer(cellRender);
 		tableView.getColumn("Raw Data").setCellRenderer(cellRender);
+		tableView.getColumn("Import Date").setCellRenderer(cellRender);
 		tableView.getColumn("Status").setCellRenderer(cellRender);
 
 		this.setViewportView(this.tableView);
@@ -120,11 +122,12 @@ public class PmPermitView extends JScrollPane {
 					List<Permit> permits = accessor.getPermits(PmPermitView.this.getPermitType(),
 							PmPermitView.this.currentShip.getImo());
 					for (Permit p : permits) {
-						Object[] row = new Object[4];
+						Object[] row = new Object[5];
 						row[0] = p.getPermitId();
 						row[1] = p.getExpireDate();
 						row[2] = p.getRawText();
-						row[3] = p.getStatus();
+						row[3] = p.getImportDate();
+						row[4] = p.getExpirationStatus();
 						tableModel.addRow(row);
 					}
 				} catch (Exception e) {

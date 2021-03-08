@@ -1,13 +1,12 @@
 CREATE TABLE `t_permit` (
   `permitId` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `permitType` varchar(16) NOT NULL,
-  `expireDate` varchar(256) DEFAULT NULL,
+  `expireDate` varchar(32) DEFAULT NULL,
   `rawData` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `status` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `importDate` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `IMO` varchar(32) NOT NULL,
   PRIMARY KEY (`permitId`,`permitType`,`IMO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
 
 CREATE TABLE `t_ship` (
   `shipName` varchar(64) NOT NULL,

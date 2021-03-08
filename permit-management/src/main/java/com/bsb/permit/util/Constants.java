@@ -13,7 +13,7 @@ public final class Constants {
 	public static final String PM_MENU_PERMIT_RESERVE1 = "Reserve1";
 	public static final String PM_MENU_PERMIT_RESERVE2 = "Reserve2";
 	public static final String PM_MENU_PERMIT_EXPORT = "Export...";
-	public static final String PM_MENU_PERMIT_OBSOLETE = "Obsolete";
+	public static final String PM_MENU_PERMIT_OBSOLETE = "Delete";
 	public static final String PM_MENU_EXIT = "Exit";
 
 	public static final String PM_MENU_SHIP = "Ship";
@@ -31,6 +31,9 @@ public final class Constants {
 	public static final String PM_PERMIT_TYPE_RESERVE2 = "RESERVE2";
 	public static final String PM_PERMIT_TYPE_BACKUP = "BACKUP";
 	public static final String PM_PERMIT_TYPE_NULL = "NULL";
+	public static final String PM_PERMIT_EXPIRATION_STATUS_EXPIRED = "Expired";
+	public static final String PM_PERMIT_EXPIRATION_STATUS_EXPIRING = "Expiring in a month";
+	public static final String PM_PERMIT_EXPIRATION_STATUS_VALID = "Valid";
 
 	public static final int DATA_ACCESSOR_ADD = 0;
 	public static final int DATA_ACCESSOR_UPDATE = 1;

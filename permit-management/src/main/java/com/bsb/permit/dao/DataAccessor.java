@@ -15,7 +15,6 @@ import com.bsb.permit.exception.PmException;
 import com.bsb.permit.model.Permit;
 import com.bsb.permit.model.PermitType;
 import com.bsb.permit.model.Ship;
-import com.bsb.permit.model.StandardPermitStatuses;
 import com.bsb.permit.model.StandardPermitTypes;
 import com.bsb.permit.util.Constants;
 
@@ -53,13 +52,13 @@ public class DataAccessor implements AutoCloseable {
 		ResultSet rs = null;
 		try {
 			List<Permit> result = new ArrayList<Permit>();
-			String sql = "select permitId, expireDate, rawData, status, permitType, imo from t_permit";
+			String sql = "select permitId, expireDate, rawData, importDate, permitType, imo from t_permit";
 			statSelect = cnn.prepareStatement(sql);
 			rs = statSelect.executeQuery(sql);
 			while (rs.next()) {
 				result.add(new Permit(rs.getString("permitId"), rs.getNString("expireDate"), rs.getString("rawData"),
-						StandardPermitStatuses.mapPermitStatus(rs.getString("status")),
-						StandardPermitTypes.mapPermitType(rs.getString("permitType")), rs.getString("imo")));
+						rs.getString("importDate"), StandardPermitTypes.mapPermitType(rs.getString("permitType")),
+						rs.getString("imo")));
 			}
 			return result;
 		} catch (Exception e) {
@@ -80,14 +79,14 @@ public class DataAccessor implements AutoCloseable {
 		ResultSet rs = null;
 		try {
 			List<Permit> result = new ArrayList<Permit>();
-			String sqlFormat = "select permitId, expireDate, rawData, status, permitType, imo from t_permit where permitType = '%s' and imo = '%s' order by expireDate, permitId asc";
+			String sqlFormat = "select permitId, expireDate, rawData, importDate, permitType, imo from t_permit where permitType = '%s' and imo = '%s' order by expireDate, permitId asc";
 			String sql = String.format(sqlFormat, permitType.getTypeName(), imo);
 			statSelect = cnn.prepareStatement(sql);
 			rs = statSelect.executeQuery(sql);
 			while (rs.next()) {
 				result.add(new Permit(rs.getString("permitId"), rs.getNString("expireDate"), rs.getString("rawData"),
-						StandardPermitStatuses.mapPermitStatus(rs.getString("status")),
-						StandardPermitTypes.mapPermitType(rs.getString("permitType")), rs.getString("imo")));
+						rs.getString("importDate"), StandardPermitTypes.mapPermitType(rs.getString("permitType")),
+						rs.getString("imo")));
 			}
 			return result;
 		} catch (Exception e) {
@@ -123,35 +122,6 @@ public class DataAccessor implements AutoCloseable {
 		}
 	}
 
-	private void addPermit(Permit permit) {
-		PreparedStatement statSelect = null;
-		PreparedStatement statUpdate = null;
-		ResultSet rs = null;
-		try {
-			String sql = "select permitId from t_permit where permitId='" + permit.getPermitId() + "'";
-			statSelect = cnn.prepareStatement(sql);
-			rs = statSelect.executeQuery();
-			if (rs.next()) {
-				// already exist
-				closeResource(statSelect);
-				statSelect = null;
-			} else {
-				// add
-				String sqlFormat = "insert into t_permit (permitId, expireDate, rawData, status) values ('%s','%s','%s','%s')";
-				sql = String.format(sqlFormat, permit.getPermitId(), permit.getExpireDate(), permit.getRawText(), '1');
-				statUpdate = cnn.prepareStatement(sql);
-				int rows = statUpdate.executeUpdate(sql);
-				logger.info("Add affected rows = " + rows);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			closeResource(rs);
-			closeResource(statSelect);
-			closeResource(statUpdate);
-		}
-	}
-
 	public int addOrUpdatePermit(Permit permit) {
 		PreparedStatement statSelect = null;
 		PreparedStatement statUpdate = null;
@@ -169,10 +139,9 @@ public class DataAccessor implements AutoCloseable {
 				String existing = rs.getString("expireDate");
 				if (existing.compareToIgnoreCase(permit.getExpireDate()) < 0) {
 					// update
-					sqlFormat = "update t_permit set expireDate = '%s', rawData = '%s', status = '%s' where permitId='%s' and permitType='%s' and imo='%s'";
-					sql = String.format(sqlFormat, permit.getExpireDate(), permit.getRawText(),
-							StandardPermitStatuses.STATUS_EXTENDED, permit.getPermitId(),
-							permit.getPermitType().getTypeName(), permit.getImo());
+					sqlFormat = "update t_permit set expireDate = '%s', rawData = '%s', importDate = '%s' where permitId='%s' and permitType='%s' and imo='%s'";
+					sql = String.format(sqlFormat, permit.getExpireDate(), permit.getRawText(), permit.getImportDate(),
+							permit.getPermitId(), permit.getPermitType().getTypeName(), permit.getImo());
 					statUpdate = cnn.prepareStatement(sql);
 					int rows = statUpdate.executeUpdate(sql);
 					logger.info("Update affected rows = " + rows);
@@ -183,9 +152,9 @@ public class DataAccessor implements AutoCloseable {
 				}
 			} else {
 				// add
-				sqlFormat = "insert into t_permit (permitId, expireDate, rawData, status, permitType, imo) values ('%s','%s','%s','%s','%s','%s')";
+				sqlFormat = "insert into t_permit (permitId, expireDate, rawData, importDate, permitType, imo) values ('%s','%s','%s','%s','%s','%s')";
 				sql = String.format(sqlFormat, permit.getPermitId(), permit.getExpireDate(), permit.getRawText(),
-						StandardPermitStatuses.STATUS_NEW, permit.getPermitType().getTypeName(), permit.getImo());
+						permit.getImportDate(), permit.getPermitType().getTypeName(), permit.getImo());
 				statUpdate = cnn.prepareStatement(sql);
 				int rows = statUpdate.executeUpdate(sql);
 				logger.info("Add affected rows = " + rows);
@@ -218,19 +187,19 @@ public class DataAccessor implements AutoCloseable {
 			return false;
 		}
 
-		PreparedStatement statUpdate = null;
-		try {
-			String sqlFormat = "update t_permit set status = '%s' where permitId = '%s'";
-			String sql = String.format(sqlFormat, StandardPermitStatuses.STATUS_OBSOLETED, permit.getPermitId());
-			statUpdate = cnn.prepareStatement(sql);
-			int rows = statUpdate.executeUpdate(sql);
-			logger.info("Update affected rows = " + rows);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			closeResource(statUpdate);
-		}
+//		PreparedStatement statUpdate = null;
+//		try {
+//			String sqlFormat = "update t_permit set status = '%s' where permitId = '%s'";
+//			String sql = String.format(sqlFormat, StandardPermitStatuses.STATUS_OBSOLETED, permit.getPermitId());
+//			statUpdate = cnn.prepareStatement(sql);
+//			int rows = statUpdate.executeUpdate(sql);
+//			logger.info("Update affected rows = " + rows);
+//			return true;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			closeResource(statUpdate);
+//		}
 
 		return false;
 	}

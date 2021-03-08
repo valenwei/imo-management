@@ -95,7 +95,6 @@ public class PmTabbedPermitView extends JTabbedPane implements ChangeListener {
 		JMenuBar menuBar = PmMainFrame.getInstance().getJMenuBar();
 		JMenu permitMenu = menuBar.getMenu(0);
 		JMenu importMenu = (JMenu) permitMenu.getMenuComponent(0);
-		System.out.println(importMenu.getMenuComponentCount());
 
 		int count = importMenu.getMenuComponentCount();
 		for (int i = 0; i < count; i++) {
