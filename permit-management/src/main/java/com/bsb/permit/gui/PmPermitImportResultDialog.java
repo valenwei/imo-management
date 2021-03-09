@@ -8,6 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import com.bsb.permit.model.Permit;
@@ -34,8 +35,9 @@ public class PmPermitImportResultDialog extends JDialog {
 		Container container = this.getContentPane();
 		JScrollPane pane = new JScrollPane();
 
-		tableModel = new DefaultTableModel(new String[] { "Permit Id", "Expire Date", "Raw Data", "Status" }, 0);
+		tableModel = new PmTableModel(new String[] { "Permit Id", "Expire Date", "Raw Data", "Status" }, 0);
 		tableView = new JTable(tableModel);
+		tableView.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		tableView.setForeground(Color.BLACK);
 		tableView.setFont(new Font(null, Font.PLAIN, 14));

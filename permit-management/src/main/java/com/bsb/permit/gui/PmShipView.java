@@ -2,13 +2,17 @@ package com.bsb.permit.gui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +48,11 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 	private PmShipView() {
 		super();
 
-		tableModel = new DefaultTableModel(new String[] { "IMO", "Ship Name", "Description", "Owner Company", "Master",
+		tableModel = new PmTableModel(new String[] { "IMO", "Ship Name", "Description", "Owner Company", "Master",
 				"Backup", "Reserve1", "Reserve2" }, 0);
 		tableView = new JTable(tableModel);
 		tableView.getSelectionModel().addListSelectionListener(this);
+		tableView.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		tableView.setForeground(Color.BLACK);
 		tableView.setFont(new Font(null, Font.PLAIN, 14));
@@ -119,6 +124,8 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 					}
 				}
 			}
+
+//			PmShipView.this.fitTableColumns();
 		}
 	}
 
@@ -228,5 +235,28 @@ public class PmShipView extends JScrollPane implements Runnable, ListSelectionLi
 //
 //		});
 //		t.start();
+	}
+
+	public void fitTableColumns() {
+		JTableHeader header = this.tableView.getTableHeader();
+		int rowCount = this.tableView.getRowCount();
+
+		Enumeration<TableColumn> columns = this.tableView.getColumnModel().getColumns();
+		while (columns.hasMoreElements()) {
+			TableColumn column = (TableColumn) columns.nextElement();
+			int col = header.getColumnModel().getColumnIndex(column.getIdentifier());
+			int width = (int) this.tableView.getTableHeader().getDefaultRenderer()
+					.getTableCellRendererComponent(this.tableView, column.getIdentifier(), false, false, -1, col)
+					.getPreferredSize().getWidth();
+			for (int row = 0; row < rowCount; row++) {
+				int preferedWidth = (int) this.tableView
+						.getCellRenderer(row, col).getTableCellRendererComponent(this.tableView,
+								this.tableView.getValueAt(row, col), false, false, row, col)
+						.getPreferredSize().getWidth();
+				width = Math.max(width, preferedWidth);
+			}
+			header.setResizingColumn(column); // important
+			column.setWidth(width + this.tableView.getIntercellSpacing().width);
+		}
 	}
 }

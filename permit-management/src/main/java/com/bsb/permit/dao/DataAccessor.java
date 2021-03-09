@@ -35,10 +35,13 @@ public class DataAccessor implements AutoCloseable {
 	private void connect() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 
-		String url = "jdbc:mysql://localhost:3306/tissing";
+		// "jdbc:mysql://localhost:3306/tissing"
+		String urlFormat = "jdbc:mysql://%s:%s/tissing";
+		String url = String.format(urlFormat, System.getProperty("pm.server", "localhost"),
+				System.getProperty("pm.port", "3306"));
 		Properties prop = new Properties();
-		prop.setProperty("user", "root");
-		prop.setProperty("password", "root000");
+		prop.setProperty("user", System.getProperty("pm.user", "root"));
+		prop.setProperty("password", System.getProperty("pm.password", "root000"));
 		cnn = DriverManager.getConnection(url, prop);
 	}
 
