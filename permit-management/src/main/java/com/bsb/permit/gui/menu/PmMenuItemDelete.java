@@ -1,8 +1,10 @@
 package com.bsb.permit.gui.menu;
 
+import com.bsb.permit.dao.DataAccessor;
 import com.bsb.permit.gui.PmConfirmationDialog;
 import com.bsb.permit.gui.PmPermitView;
 import com.bsb.permit.gui.PmTabbedPermitView;
+import com.bsb.permit.model.Permit;
 
 public class PmMenuItemDelete extends PmMenuItem {
 
@@ -25,10 +27,25 @@ public class PmMenuItemDelete extends PmMenuItem {
 	public void performAction() {
 		// TODO Auto-generated method stub
 
-		if (PmConfirmationDialog.show("Are you sure to delete the permit?").isConfirmed()) {
-			System.out.println("Yes");
-			PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
-			currentPermitView.getSelectedRows();
+		PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
+		Permit permit = currentPermitView.getSelectedPermit();
+		if (null != permit && PmConfirmationDialog.show("Are you sure to delete the permit?").isConfirmed()) {
+			DataAccessor accessor = new DataAccessor();
+			try {
+				if (accessor.deletePermit(permit)) {
+					currentPermitView.deleteSelectedPermit();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				try {
+					accessor.close();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 //		Thread t = new Thread(new Runnable() {
 //			@Override

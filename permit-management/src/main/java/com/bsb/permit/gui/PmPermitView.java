@@ -94,14 +94,19 @@ public class PmPermitView extends JScrollPane {
 			return null;
 		}
 		int currentRow = this.tableView.getSelectedRow();
-		return new Permit(this.tableView.getValueAt(currentRow, 1).toString(),
+		return new Permit(this.tableView.getValueAt(currentRow, 0).toString(),
+				this.tableView.getValueAt(currentRow, 1).toString(),
 				this.tableView.getValueAt(currentRow, 2).toString(),
-				this.tableView.getValueAt(currentRow, 0).toString(),
-				this.tableView.getValueAt(currentRow, 3).toString(),
-				this.tableView.getValueAt(currentRow, 4).toString(),
-				this.tableView.getValueAt(this.lastSelectRow, 5).toString(),
-				this.tableView.getValueAt(this.lastSelectRow, 6).toString(),
-				this.tableView.getValueAt(this.lastSelectRow, 7).toString());
+				this.tableView.getValueAt(currentRow, 3).toString(), this.getPermitType(),
+				PmShipView.getInstance().getSelectedShip().getImo());
+	}
+
+	public void deleteSelectedPermit() {
+		if (this.tableView.getSelectedRow() < 0) {
+			return;
+		}
+		int row = this.tableView.getSelectedRow();
+		this.tableModel.removeRow(row);
 	}
 
 	public PermitType getPermitType() {
