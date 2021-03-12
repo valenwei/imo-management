@@ -1,6 +1,10 @@
 package com.bsb.permit.gui.menu;
 
-public class PmMenuItemObsolete extends PmMenuItem {
+import com.bsb.permit.gui.PmConfirmationDialog;
+import com.bsb.permit.gui.PmPermitView;
+import com.bsb.permit.gui.PmTabbedPermitView;
+
+public class PmMenuItemDelete extends PmMenuItem {
 
 	/**
 	 * 
@@ -9,17 +13,23 @@ public class PmMenuItemObsolete extends PmMenuItem {
 
 //	private static Logger logger = LoggerFactory.getLogger(PmMenuItemObsolete.class);
 
-	public PmMenuItemObsolete() {
+	public PmMenuItemDelete() {
 		super();
 	}
 
-	public PmMenuItemObsolete(String text) {
+	public PmMenuItemDelete(String text) {
 		super(text);
 	}
 
 	@Override
 	public void performAction() {
 		// TODO Auto-generated method stub
+
+		if (PmConfirmationDialog.show("Are you sure to delete the permit?").isConfirmed()) {
+			System.out.println("Yes");
+			PmPermitView currentPermitView = (PmPermitView) PmTabbedPermitView.getInstance().getSelectedComponent();
+			currentPermitView.getSelectedRows();
+		}
 //		Thread t = new Thread(new Runnable() {
 //			@Override
 //			public void run() {

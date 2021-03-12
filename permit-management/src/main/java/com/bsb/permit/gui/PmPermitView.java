@@ -89,6 +89,21 @@ public class PmPermitView extends JScrollPane {
 		return rows;
 	}
 
+	public Permit getSelectedPermit() {
+		if (this.tableView.getSelectedRow() < 0) {
+			return null;
+		}
+		int currentRow = this.tableView.getSelectedRow();
+		return new Permit(this.tableView.getValueAt(currentRow, 1).toString(),
+				this.tableView.getValueAt(currentRow, 2).toString(),
+				this.tableView.getValueAt(currentRow, 0).toString(),
+				this.tableView.getValueAt(currentRow, 3).toString(),
+				this.tableView.getValueAt(currentRow, 4).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 5).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 6).toString(),
+				this.tableView.getValueAt(this.lastSelectRow, 7).toString());
+	}
+
 	public PermitType getPermitType() {
 		return permitType;
 	}

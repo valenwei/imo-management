@@ -19,8 +19,6 @@ public final class PmAddShipDialog {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			System.out.println(this.ship.getImo());
-			System.out.println(this.ship.getShipName());
 			// insert into database
 			DataAccessor accessor = new DataAccessor();
 			if (accessor.addShip(ship) > 0) {

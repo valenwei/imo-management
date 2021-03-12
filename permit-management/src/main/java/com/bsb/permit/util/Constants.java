@@ -13,7 +13,7 @@ public final class Constants {
 	public static final String PM_MENU_PERMIT_RESERVE1 = "Reserve1";
 	public static final String PM_MENU_PERMIT_RESERVE2 = "Reserve2";
 	public static final String PM_MENU_PERMIT_EXPORT = "Export...";
-	public static final String PM_MENU_PERMIT_OBSOLETE = "Delete";
+	public static final String PM_MENU_PERMIT_DELETE = "Delete";
 	public static final String PM_MENU_EXIT = "Exit";
 
 	public static final String PM_MENU_SHIP = "Ship";

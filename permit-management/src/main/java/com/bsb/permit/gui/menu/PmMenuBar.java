@@ -48,7 +48,7 @@ public class PmMenuBar extends JMenuBar {
 		PmMenuItem export = new PmMenuItemExport(Constants.PM_MENU_PERMIT_EXPORT);
 		export.setMnemonic(KeyEvent.VK_E);
 
-		PmMenuItem obsolete = new PmMenuItemObsolete(Constants.PM_MENU_PERMIT_OBSOLETE);
+		PmMenuItem obsolete = new PmMenuItemDelete(Constants.PM_MENU_PERMIT_DELETE);
 		obsolete.setMnemonic(KeyEvent.VK_T);
 
 		PmMenuItem exit = new PmMenuItemExit(Constants.PM_MENU_EXIT);
@@ -69,7 +69,7 @@ public class PmMenuBar extends JMenuBar {
 		PmMenuItem addShip = new PmMenuItemAddShip(Constants.PM_MENU_SHIP_ADD);
 		shipMenu.add(addShip);
 
-		PmMenuItem deleteShip = new PmMenuItemAddShip(Constants.PM_MENU_SHIP_DELETE);
+		PmMenuItem deleteShip = new PmMenuItemDeleteShip(Constants.PM_MENU_SHIP_DELETE);
 		shipMenu.add(deleteShip);
 
 		this.add(shipMenu);

@@ -28,7 +28,7 @@ public class DataAccessor implements AutoCloseable {
 		try {
 			connect();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 		}
 	}
 
@@ -164,7 +164,7 @@ public class DataAccessor implements AutoCloseable {
 				return Constants.DATA_ACCESSOR_ADD;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.info(e.getMessage() + ". " + e.getStackTrace().toString());
 			return Constants.DATA_ACCESSOR_FAILURE;
 		} finally {
 			closeResource(rs);
@@ -173,36 +173,26 @@ public class DataAccessor implements AutoCloseable {
 		}
 	}
 
-	public void obsoletePermits(List<Permit> permits) {
-
-		if (null == permits) {
-			return;
-		}
-
-		for (Permit p : permits) {
-			this.obsoletePermit(p);
-		}
-	}
-
-	public boolean obsoletePermit(Permit permit) {
+	public boolean deletePermit(Permit permit) {
 		if (null == permit) {
 			logger.info("Permit is null");
 			return false;
 		}
 
-//		PreparedStatement statUpdate = null;
-//		try {
-//			String sqlFormat = "update t_permit set status = '%s' where permitId = '%s'";
-//			String sql = String.format(sqlFormat, StandardPermitStatuses.STATUS_OBSOLETED, permit.getPermitId());
-//			statUpdate = cnn.prepareStatement(sql);
-//			int rows = statUpdate.executeUpdate(sql);
-//			logger.info("Update affected rows = " + rows);
-//			return true;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//			closeResource(statUpdate);
-//		}
+		PreparedStatement statUpdate = null;
+		try {
+			String sqlFormat = "delete from t_permit where permitId = '%s' and IMO = '%s'";
+			String sql = String.format(sqlFormat, permit.getPermitId(), permit.getImo());
+			statUpdate = cnn.prepareStatement(sql);
+			int rows = statUpdate.executeUpdate();
+			logger.info("Delete affected rows = " + rows);
+			return true;
+		} catch (Exception e) {
+			logger.info("Delete permit failed: " + permit.getPermitId() + ", " + permit.getImo());
+			logger.info(e.getMessage() + ". " + e.getStackTrace().toString());
+		} finally {
+			closeResource(statUpdate);
+		}
 
 		return false;
 	}
@@ -229,17 +219,41 @@ public class DataAccessor implements AutoCloseable {
 						ship.getOwnerCompany(), ship.getMaster(), ship.getBackup(), ship.getReserve1(),
 						ship.getReserve2());
 				statUpdate = cnn.prepareStatement(sql);
-				int rows = statUpdate.executeUpdate(sql);
+				int rows = statUpdate.executeUpdate();
 				logger.info("Add affected rows = " + rows);
 				result = 1;
 			}
 		} catch (Exception e) {
 			result = -1;
-			logger.info("Add ship failed. " + e.getMessage());
-			e.printStackTrace();
+			logger.info("Add ship failed.");
+			logger.info(e.getMessage() + ". " + e.getStackTrace().toString());
 		} finally {
 			closeResource(rs);
 			closeResource(statSelect);
+			closeResource(statUpdate);
+		}
+
+		return result;
+	}
+
+	public int deleteShip(Ship ship) {
+		int result = -1;
+
+		PreparedStatement statUpdate = null;
+		ResultSet rs = null;
+		try {
+			String sqlFormat = "delete from t_ship where IMO ='%s'";
+			String sql = String.format(sqlFormat, ship.getImo());
+			statUpdate = cnn.prepareStatement(sql);
+			int rows = statUpdate.executeUpdate();
+			logger.info("Delete affected rows = " + rows);
+			result = 1;
+		} catch (Exception e) {
+			result = -1;
+			logger.info("Add ship failed.");
+			logger.info(e.getMessage() + ". " + e.getStackTrace().toString());
+		} finally {
+			closeResource(rs);
 			closeResource(statUpdate);
 		}
 
@@ -265,7 +279,7 @@ public class DataAccessor implements AutoCloseable {
 			}
 			return result;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.info(e.getMessage() + ". " + e.getStackTrace().toString());
 			throw new PmException(Constants.PM_EXCEPTION_CONNECTION_FAILURE, e);
 		} finally {
 			closeResource(rs);
@@ -282,7 +296,7 @@ public class DataAccessor implements AutoCloseable {
 			obj.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.getMessage() + ". " + e.getStackTrace().toString());
 		}
 	}
 
