@@ -236,25 +236,55 @@ public class DataAccessor implements AutoCloseable {
 		return result;
 	}
 
-	public int deleteShip(Ship ship) {
-		int result = -1;
+	public boolean deleteShip(Ship ship) {
+		boolean result = true;
+
+		boolean autoCommit = true;
 
 		PreparedStatement statUpdate = null;
+		PreparedStatement statUpdate2 = null;
 		ResultSet rs = null;
 		try {
-			String sqlFormat = "delete from t_ship where IMO ='%s'";
+			autoCommit = cnn.getAutoCommit();
+
+			cnn.setAutoCommit(false);
+
+			// delete permits of the ship
+			String sqlFormat = "delete from t_permit where IMO ='%s'";
 			String sql = String.format(sqlFormat, ship.getImo());
+
 			statUpdate = cnn.prepareStatement(sql);
 			int rows = statUpdate.executeUpdate();
-			logger.info("Delete affected rows = " + rows);
-			result = 1;
+			logger.info(rows + " permits deleted. The ship is: " + ship.getImo());
+
+			// delete the ship
+			sqlFormat = "delete from t_ship where IMO ='%s'";
+			sql = String.format(sqlFormat, ship.getImo());
+			statUpdate2 = cnn.prepareStatement(sql);
+			rows = statUpdate2.executeUpdate();
+
+			cnn.commit();
+			logger.info(rows + " ships deleted. The ship is: " + ship.getImo());
 		} catch (Exception e) {
-			result = -1;
-			logger.info("Add ship failed.");
+			result = false;
+			try {
+				cnn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			logger.info("Delete ship failed.");
 			logger.info(e.getMessage() + ". " + e.getStackTrace().toString());
 		} finally {
 			closeResource(rs);
 			closeResource(statUpdate);
+			closeResource(statUpdate2);
+			try {
+				cnn.setAutoCommit(autoCommit);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		return result;
